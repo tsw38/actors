@@ -24,6 +24,7 @@
 			$('form').on('submit', (e) => {
 				e.preventDefault();
 				if(!$('input[name=celebrity]').val().length) return;
+				$('body').append('<div class="loading" style="text-align:center; font-size:40px">Loading</div>');
 				$.ajax({
 					type: "POST",
 					url: '/',
@@ -60,6 +61,7 @@
 								};
 
 								// Instantiate and draw our chart, passing in some options.
+								$('.loading').remove();
 								var chart = new google.visualization.ScatterChart(document.getElementById('chart-container'));
 								chart.draw(data, options);
 							}
