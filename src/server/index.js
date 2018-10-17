@@ -33,7 +33,7 @@ export default async function headless(celebrity = ''){
           columns.splice(2,1);
 
       return {
-        rating: Number(columns[0].replace(/\%/g, '')),
+        rating: columns[0].replace(/\%/g, ''),
         title: columns[1],
         boxOffice: (/[0-9]/g).test(columns[2]) ? columns[2] : null,
         year: Number(columns[3])

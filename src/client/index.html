@@ -33,7 +33,7 @@
 					},
 					success: ({status, message}) => {
 						if(status === 200){
-							message = JSON.parse(message).map(movie => [movie.year, movie.rating || 0]);
+							message = JSON.parse(message).filter(movie => !(/[a-zA-Z]/g).test(movie.rating)).map(movie => [movie.year, Number(movie.rating)]);
 
 							// Load the Visualization API and the corechart package.
 							google.charts.load('current', {'packages':['corechart']});
@@ -46,14 +46,19 @@
 							// draws it.
 							function drawChart() {
 								// Create the data table.
+								console.warn(message);
 								var data = new google.visualization.arrayToDataTable([['Year', 'Rating'], ...message]);
 
 
 								// Set chart options
 								var options = {
-									'title':$('input[name=celebrity]').val() + ' RT over Time',
+									title: $('input[name=celebrity]')
+										.val()
+										.split(' ')
+										.map(name => `${name.charAt(0).toUpperCase()}${name.substr(1, name.length)}`)
+										.join(' ') + ' RT Over Time',
 									hAxis: {title: 'Year'},
-									vAxis: {title: 'Rating', minValue: 0},
+									vAxis: {title: 'Rating', minValue: 0, maxValue: 100},
 									width: 800,
 									height: 500,
 									legend: 'none',
