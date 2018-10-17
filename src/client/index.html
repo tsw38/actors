@@ -33,7 +33,9 @@
 					},
 					success: ({status, message}) => {
 						if(status === 200){
-							message = JSON.parse(message).filter(movie => !(/[a-zA-Z]/g).test(movie.rating)).map(movie => [movie.year, Number(movie.rating)]);
+							message = JSON.parse(message)
+								.filter(movie => !(/[a-zA-Z]/g).test(movie.rating))
+								.map(movie => [movie.year, Number(movie.rating)]);
 
 							// Load the Visualization API and the corechart package.
 							google.charts.load('current', {'packages':['corechart']});
@@ -46,7 +48,6 @@
 							// draws it.
 							function drawChart() {
 								// Create the data table.
-								console.warn(message);
 								var data = new google.visualization.arrayToDataTable([['Year', 'Rating'], ...message]);
 
 
