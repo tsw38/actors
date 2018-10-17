@@ -9,7 +9,8 @@ import dotenv from 'dotenv';
 // import {Variables} from '../shared/utils';
 // import jwt from 'jsonwebtoken';
 
-import rottenSearch from './index';
+import rottenSearch from './scrapper';
+import html from '../client/index';
 
 dotenv.config();
 
@@ -23,10 +24,13 @@ express()
 	res.header('Access-Control-Allow-Headers', 'Content-Type');
 	next();
 })
-.use('/', express.static((path.join(__dirname, 'src/client'))))
-.post('/', async (req,res) => {
-	const results = await rottenSearch(req.body.celebrity);
-	res.json(results);
+.get('/', (req,res) => html(req,res)())
+.get('/search', async (req,res) => {
+	const results = await rottenSearch(req.query.celebrity);
+	return html(req,res)({
+		fromServer: results,
+		celebrity: req.query.celebrity
+	});
 })
 .listen(process.env.HTTP_PORT,'0.0.0.0', () => {
 	console.log(chalk.magenta(`VERSION NUMBER: ${process.env.VERSION_NUMBER}`))
