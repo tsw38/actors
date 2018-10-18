@@ -112,7 +112,7 @@ var html = (req,res,next) => ({celebrity = '', fromServer={}} = {}) => {
           if(STATE.status === 200){
             var serverData = JSON.parse(STATE.message)
               .filter(movie => !(/[a-zA-Z]/g).test(movie.rating))
-              .map(movie => [movie.year, Number(movie.rating)]);
+              .map(movie => [movie.year, Number(movie.rating), movie.title + ' (' + movie.year + ') ' + '['+ movie.rating +'%]']);
 
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
@@ -125,14 +125,14 @@ var html = (req,res,next) => ({celebrity = '', fromServer={}} = {}) => {
             // draws it.
             function drawChart() {
               // Create the data table.
-              var data = new google.visualization.arrayToDataTable([['Year', 'Rating'], ...serverData]);
+              var data = new google.visualization.arrayToDataTable([['Year', 'Rating', {type: 'string', role: 'tooltip'}], ...serverData]);
 
               // Set chart options
               var options = {
                 title: STATE.celebrity + ' RT Over Time',
-                hAxis: {title: 'Year'},
+                hAxis: {title: 'Year', format: '0000'},
                 vAxis: {title: 'Rating', minValue: 0, maxValue: 100},
-                width: 800,
+                width: 1000,
                 height: 500,
                 legend: 'none',
                 trendlines: { 0: {} }    // Draw a trendline for data series 0.
