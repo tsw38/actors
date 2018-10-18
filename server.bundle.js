@@ -39,14 +39,26 @@ async function headless(celebrity = ''){
   //     tableHead.splice(2,1);
 
   let movies = await page.$$eval('#filmographyTbl tbody tr', movies => movies.map(movie => {
-      var columns = movie.innerText.split('\t').map(column => column.replace(/\n/g, ''));
-          columns.splice(2,1);
+      let columns = movie.innerText.split('\t').map(column => column.replace(/\n/g, ''));
+      let role = movie
+        .innerText
+        .split('\t')[2]
+        .split('\n')
+        .filter(elem => elem.length)
+        .map(str => {
+          if((/producer/i).test(str)){ str = 'Producer'; }
+          else if((/screenwriter/i).test(str)){ str = 'Screenwriter'; }
+          else if((/director/i).test(str)){ str = 'Director'; }
+          else { str = "Actor"; }
+          return str;
+        });
 
       return {
-        rating: columns[0].replace(/\%/g, ''),
+        role,
         title: columns[1],
-        boxOffice: (/[0-9]/g).test(columns[2]) ? columns[2] : null,
-        year: Number(columns[3])
+        year: Number(columns[4]),
+        rating: columns[0].replace(/\%/g, ''),
+        boxOffice: (/[0-9]/g).test(columns[3]) ? columns[3] : null
       };
   }));
 
