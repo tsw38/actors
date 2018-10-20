@@ -221,8 +221,8 @@ var cacheInsert = async ({results, celebrity}) => {
     password:process.env.DB_PASS,
     database:process.env.DB_NAME
   });
-
-  const celebrityInsert = await connection.query(`INSERT IGNORE INTO celebrity (name) VALUES ('${celebrity}');`);
+  console.warn(celebrity.toLowerCase());
+  const celebrityInsert = await connection.query(`INSERT IGNORE INTO celebrity (name) VALUES ('${celebrity.toLowerCase()}');`);
   const celebrityKey    = celebrityInsert[0].insertId;
 
   const insertMoviesQuery = "INSERT IGNORE INTO movie (name, rating, year, boxOffice) VALUES ?";
