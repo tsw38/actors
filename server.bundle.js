@@ -3,6 +3,9 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var puppeteer = _interopDefault(require('puppeteer'));
+var mysql = _interopDefault(require('mysql2/promise'));
+var atob = _interopDefault(require('atob'));
+var btoa = _interopDefault(require('btoa'));
 var express = _interopDefault(require('express'));
 var bodyParser = _interopDefault(require('body-parser'));
 require('path');
@@ -30,7 +33,7 @@ async function headless(celebrity = ''){
       await browser.close();
       return {
         status: 404,
-        message: `https://www.rottentomatoes.com/search/?search=${celebrity.replace(/\-/, '+')}`
+        data: `https://www.rottentomatoes.com/search/?search=${celebrity.replace(/\-/, '+')}`
       }
     }
   }
@@ -67,7 +70,7 @@ async function headless(celebrity = ''){
 
   return {
     status: 200,
-    message: JSON.stringify(movies)
+    data: movies
   }
 }
 
@@ -110,7 +113,7 @@ var html = (req,res,next) => ({celebrity = '', fromServer={}} = {}) => {
           })
 
           if(STATE.status === 200){
-            var serverData = JSON.parse(STATE.message)
+            var serverData = STATE.data
               .filter(movie => !(/[a-zA-Z]/g).test(movie.rating))
               .map(movie => [movie.year, Number(movie.rating), movie.title + ' (' + movie.year + ') ' + '['+ movie.rating +'%]']);
 
@@ -144,12 +147,128 @@ var html = (req,res,next) => ({celebrity = '', fromServer={}} = {}) => {
             }
           }
           else if(STATE.status === 404){
-            $('body').append(STATE.message);
+            $('body').append(STATE.data);
           }
     		})
     	</script>
     </html>
     `);
+};
+
+var cacheSearch = async (celebrity) => {
+  const connection = await mysql.createConnection({
+    host:process.env.DB_HOST,
+    user:process.env.DB_USER,
+    password:process.env.DB_PASS,
+    database:process.env.DB_NAME
+  });
+
+  let data = await connection.query(`
+    SELECT
+      C.name as name,
+      M.name as movie,
+      rating,
+      R.name as role,
+      year,
+      boxOffice
+    FROM
+      celebrity as C
+    JOIN
+      rolesToCelebToMovie as RCM ON C.id = RCM.celebId
+    JOIN
+      movie as M ON RCM.movieId = M.name
+    JOIN
+      roles as R ON RCM.roleId = R.id
+    WHERE 1=1
+      and C.name="${celebrity}";`);
+
+  let movies = {};
+
+  const result = data[0].forEach(({movie, rating, role, year, boxOffice}) => {
+    const movieName = atob(movie);
+
+    if (movies[movieName]) {
+      console.warn(movieName, movies[movieName].role, role);
+      movies[movieName] = {
+        ...movies[movieName],
+        role: [...new Set(movies[movieName].role.concat(role))]
+      };
+    } else { // movie doesnt exist, insert it.
+      movies[movieName] = {
+        rating, year, boxOffice,
+        role: [role]
+      };
+    }
+  });
+
+
+
+  return {
+    status: data[0].length ? 200 : 404,
+    data: Object.keys(movies).map(movie => {
+      return {
+        ...(movies[movie]),
+        title: movie
+      }
+    })
+  }
+};
+
+var cacheInsert = async ({results, celebrity}) => {
+  const connection = await mysql.createConnection({
+    host:process.env.DB_HOST,
+    user:process.env.DB_USER,
+    password:process.env.DB_PASS,
+    database:process.env.DB_NAME
+  });
+
+  const celebrityInsert = await connection.query(`INSERT IGNORE INTO celebrity (name) VALUES ('${celebrity}');`);
+  const celebrityKey    = celebrityInsert[0].insertId;
+
+  const insertMoviesQuery = "INSERT IGNORE INTO movie (name, rating, year, boxOffice) VALUES ?";
+  const values = results.data
+    .filter(movie => !isNaN(movie.rating))
+    .map(({title, rating, year, boxOffice}) => [
+      btoa(title),
+      Number(rating),
+      year,
+      boxOffice ? boxOffice : '0'
+  ]);
+  const inserted1 = await connection.query(insertMoviesQuery, [values]);
+
+  const insertCelebToMovieQuery = "INSERT IGNORE INTO celebToMovie (celebId, movieId) VALUES ?";
+  const insertCelebToMovieQueryValues = values
+    .map(movie => [
+      celebrityKey,
+      movie[0]
+  ]);
+  const inserted2 = await connection.query(insertCelebToMovieQuery, [insertCelebToMovieQueryValues]);
+
+  let selectedRoles = await connection.query('SELECT * FROM roles');
+  selectedRoles     = selectedRoles[0];
+
+  const insertCelebAndRoles = 'INSERT IGNORE INTO rolesToCelebToMovie (celebId, roleId, movieId) VALUES ?';
+  const insertrolesToCelebToMovieQueryValues = results.data
+    .map(movie => {
+      let roleAsIdArr = movie.role.map(elem => selectedRoles.find(role => role.name === elem).id);
+      return roleAsIdArr.map(role => [
+        celebrityKey,
+        role,
+        btoa(movie.title)
+      ])
+  }).reduce((newArr, result) => { //some reason it is an array of arrays in array, fix that
+    if (Array.isArray(result) && Array.isArray(result[0])){
+      result.forEach(temp => {newArr.push(temp);});
+    } else { newArr.push(result); }
+    return newArr;
+  }, []);
+
+  const inserted3 = await connection.query(insertCelebAndRoles, [insertrolesToCelebToMovieQueryValues]);
+
+
+
+  return inserted1;
+
 };
 
 dotenv.config();
@@ -166,7 +285,15 @@ express()
 })
 .get('/', (req,res) => html(req,res)())
 .get('/search', async (req,res) => {
-	const results = await headless(req.query.celebrity);
+	let results = await cacheSearch(req.query.celebrity.toLowerCase());
+
+	if (results.status === 404) {
+		results = await headless(req.query.celebrity);
+
+		if (Array.isArray(results.data)) {
+			const inserted = await cacheInsert({results, celebrity: req.query.celebrity});
+		}
+	}
 	return html(req,res)({
 		fromServer: results,
 		celebrity: req.query.celebrity

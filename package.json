@@ -1,15 +1,11 @@
 {
   "scripts": {
-    "dev:build:server": "webpack --config webpack.dev.config.js -d",
-    "clean:dev": "ls -t build/ | rm -rf build/$(head -1)/client",
-    "clean:prod": "ls -t build/ | rm -rf build/$(head -1)",
-    "dev:build": "npm run clean:dev && webpack --config webpack.dev.config.js -d --watch",
-    "dev:watch": "gulp dev:watch",
-    "sitemap": "npx sitemap-generator-cli https://tylerscott.gallery",
-    "prod:build": "npm run clean:prod && npm run sitemap && webpack --config webpack.prod.config.js",
-    "lazyCommit": "gulp lazy"
+    "server": "rollup src/server/server.js --file server.bundle.js --format cjs && node server.bundle.js",
+    "backup": "mysqldump -u root -psaxophone1 rotten_tomatoes > rotten_tomatoes.sql",
+    "lazyPush": "rm -rf node_modules && tar -czvf tomato.tar.gz ./ && scp tomato.tar.gz tylerscott@digit1:/usr/share/nginx/sites/tomato && rm -rf tomato.tar.gz && yarn"
   },
   "dependencies": {
+    "atob": "^2.1.2",
     "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
@@ -25,6 +21,7 @@
     "babel-preset-stage-1": "^6.24.1",
     "babel-runtime": "^6.26.0",
     "bluebird": "^3.5.2",
+    "btoa": "^1.2.1",
     "chalk": "^2.4.1",
     "cheerio": "^1.0.0-rc.2",
     "dotenv": "^6.1.0",
@@ -34,6 +31,7 @@
     "gulp": "^3.9.1",
     "gulp-shell": "^0.6.5",
     "morgan": "^1.9.1",
+    "mysql2": "^1.6.1",
     "nodemon": "^1.18.4",
     "path": "^0.12.7",
     "puppeteer": "^1.9.0",

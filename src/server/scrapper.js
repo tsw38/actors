@@ -20,7 +20,7 @@ export default async function headless(celebrity = ''){
       await browser.close();
       return {
         status: 404,
-        message: `https://www.rottentomatoes.com/search/?search=${celebrity.replace(/\-/, '+')}`
+        data: `https://www.rottentomatoes.com/search/?search=${celebrity.replace(/\-/, '+')}`
       }
     }
   }
@@ -57,6 +57,6 @@ export default async function headless(celebrity = ''){
 
   return {
     status: 200,
-    message: JSON.stringify(movies)
+    data: movies
   }
 }

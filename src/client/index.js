@@ -37,7 +37,7 @@ export default (req,res,next) => ({celebrity = '', fromServer={}} = {}) => {
           })
 
           if(STATE.status === 200){
-            var serverData = JSON.parse(STATE.message)
+            var serverData = STATE.data
               .filter(movie => !(/[a-zA-Z]/g).test(movie.rating))
               .map(movie => [movie.year, Number(movie.rating), movie.title + ' (' + movie.year + ') ' + '['+ movie.rating +'%]']);
 
@@ -71,7 +71,7 @@ export default (req,res,next) => ({celebrity = '', fromServer={}} = {}) => {
             }
           }
           else if(STATE.status === 404){
-            $('body').append(STATE.message);
+            $('body').append(STATE.data);
           }
     		})
     	</script>

@@ -11,6 +11,8 @@ import dotenv from 'dotenv';
 
 import rottenSearch from './scrapper';
 import html from '../client/index';
+import cacheSearch from './cacheSearch';
+import cacheInsert from './cacheInsert';
 
 dotenv.config();
 
@@ -26,7 +28,17 @@ express()
 })
 .get('/', (req,res) => html(req,res)())
 .get('/search', async (req,res) => {
-	const results = await rottenSearch(req.query.celebrity);
+	let results = await cacheSearch(req.query.celebrity.toLowerCase());
+
+	if (results.status === 404) {
+		results = await rottenSearch(req.query.celebrity);
+
+		if (Array.isArray(results.data)) {
+			const inserted = await cacheInsert({results, celebrity: req.query.celebrity});
+		} else {
+			//couldnt find the celebrity, do the search yourself.
+		}
+	}
 	return html(req,res)({
 		fromServer: results,
 		celebrity: req.query.celebrity
