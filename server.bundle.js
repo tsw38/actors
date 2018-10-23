@@ -15,7 +15,11 @@ var dotenv = _interopDefault(require('dotenv'));
 
 async function headless(celebrity = ''){
   if(!celebrity) return;
-  celebrity     = celebrity.trim().toLowerCase().replace(/\s+/g, '_');
+  celebrity = celebrity
+    .trim().toLowerCase()
+    .replace(/\s+/g, '_')
+    .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
+
   const browser = await puppeteer.launch();
   const page    = await browser.newPage();
 
@@ -76,6 +80,7 @@ async function headless(celebrity = ''){
 
 var html = (req,res,next) => ({celebrity = '', fromServer={}} = {}) => {
   celebrity = celebrity.split(' ')
+    .map(name => name.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''))
     .map(name => name.charAt(0).toUpperCase() + name.substr(1, name.length))
     .join(' ');
   fromServer.celebrity = celebrity;
@@ -188,7 +193,7 @@ var cacheSearch = async (celebrity) => {
     const movieName = atob(movie);
 
     if (movies[movieName]) {
-      console.warn(movieName, movies[movieName].role, role);
+      // console.warn(movieName, movies[movieName].role, role)
       movies[movieName] = {
         ...movies[movieName],
         role: [...new Set(movies[movieName].role.concat(role))]
@@ -221,7 +226,7 @@ var cacheInsert = async ({results, celebrity}) => {
     password:process.env.DB_PASS,
     database:process.env.DB_NAME
   });
-  console.warn(celebrity.toLowerCase());
+  
   const celebrityInsert = await connection.query(`INSERT IGNORE INTO celebrity (name) VALUES ('${celebrity.toLowerCase()}');`);
   const celebrityKey    = celebrityInsert[0].insertId;
 
@@ -285,18 +290,20 @@ express()
 })
 .get('/', (req,res) => html(req,res)())
 .get('/search', async (req,res) => {
-	let results = await cacheSearch(req.query.celebrity.toLowerCase());
+	const celebrity = req.query.celebrity.toLowerCase().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
+
+	let results = await cacheSearch(celebrity.toLowerCase());
 
 	if (results.status === 404) {
-		results = await headless(req.query.celebrity);
+		results = await headless(celebrity);
 
 		if (Array.isArray(results.data)) {
-			const inserted = await cacheInsert({results, celebrity: req.query.celebrity});
+			const inserted = await cacheInsert({results, celebrity});
 		}
 	}
 	return html(req,res)({
 		fromServer: results,
-		celebrity: req.query.celebrity
+		celebrity
 	});
 })
 .listen(process.env.HTTP_PORT,'0.0.0.0', () => {

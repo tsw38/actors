@@ -34,7 +34,7 @@ export default async (celebrity) => {
     const movieName = atob(movie);
 
     if (movies[movieName]) {
-      console.warn(movieName, movies[movieName].role, role)
+      // console.warn(movieName, movies[movieName].role, role)
       movies[movieName] = {
         ...movies[movieName],
         role: [...new Set(movies[movieName].role.concat(role))]

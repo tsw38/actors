@@ -28,20 +28,22 @@ express()
 })
 .get('/', (req,res) => html(req,res)())
 .get('/search', async (req,res) => {
-	let results = await cacheSearch(req.query.celebrity.toLowerCase());
+	const celebrity = req.query.celebrity.toLowerCase().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
+
+	let results = await cacheSearch(celebrity.toLowerCase());
 
 	if (results.status === 404) {
-		results = await rottenSearch(req.query.celebrity);
+		results = await rottenSearch(celebrity);
 
 		if (Array.isArray(results.data)) {
-			const inserted = await cacheInsert({results, celebrity: req.query.celebrity});
+			const inserted = await cacheInsert({results, celebrity});
 		} else {
 			//couldnt find the celebrity, do the search yourself.
 		}
 	}
 	return html(req,res)({
 		fromServer: results,
-		celebrity: req.query.celebrity
+		celebrity
 	});
 })
 .listen(process.env.HTTP_PORT,'0.0.0.0', () => {

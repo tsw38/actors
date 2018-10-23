@@ -2,7 +2,11 @@ import puppeteer from 'puppeteer';
 
 export default async function headless(celebrity = ''){
   if(!celebrity) return;
-  celebrity     = celebrity.trim().toLowerCase().replace(/\s+/g, '_');
+  celebrity = celebrity
+    .trim().toLowerCase()
+    .replace(/\s+/g, '_')
+    .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
+
   const browser = await puppeteer.launch();
   const page    = await browser.newPage();
 

@@ -1,5 +1,6 @@
 export default (req,res,next) => ({celebrity = '', fromServer={}} = {}) => {
   celebrity = celebrity.split(' ')
+    .map(name => name.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''))
     .map(name => name.charAt(0).toUpperCase() + name.substr(1, name.length))
     .join(' ');
   fromServer.celebrity = celebrity;
