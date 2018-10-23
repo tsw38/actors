@@ -28,7 +28,7 @@ express()
 })
 .get('/', (req,res) => html(req,res)())
 .get('/search', async (req,res) => {
-	const celebrity = req.query.celebrity.toLowerCase().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
+	const celebrity = req.query.celebrity.toLowerCase().trim().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
 
 	let results = await cacheSearch(celebrity.toLowerCase());
 
