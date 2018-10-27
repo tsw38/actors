@@ -12,6 +12,7 @@ import ServerRenderer from './renderer';
 import {Variables} from '../shared/utils';
 
 import {
+  imagesEndpoint,
   searchEndpoint
 } from './api';
 
@@ -34,6 +35,7 @@ app
 // .use(favicon(path.join('','imgs/favicon.ico')))
 .use('*/css', express.static(`./build/${process.env.VERSION_NUMBER}/client`))
 .use('*/js', express.static(`./build/${process.env.VERSION_NUMBER}/client`))
+.get('/images(/:image)/?', imagesEndpoint)
 .get('/search', searchEndpoint)
 .use(ServerRenderer);
 

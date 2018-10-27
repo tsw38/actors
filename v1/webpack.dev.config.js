@@ -29,6 +29,15 @@ module.exports = [
         }
       ]
     },
+    resolve: {
+      alias: {
+        'actions': path.resolve(__dirname, 'src/shared/actions'),
+        'components': path.resolve(__dirname, 'src/shared/components'),
+        'context': path.resolve(__dirname, 'src/shared/context'),
+        'utils': path.resolve(__dirname, 'src/shared/utils'),
+        'views': path.resolve(__dirname, 'src/shared/views')
+      }
+    },
     optimization: {
       minimize: false,
       minimizer: [
@@ -63,6 +72,15 @@ module.exports = [
       filename: 'server.js',
       libraryTarget: 'commonjs2',
       publicPath: '/build/',
+    },
+    resolve: {
+      alias: {
+        'actions': path.resolve(__dirname, 'src/shared/actions'),
+        'components': path.resolve(__dirname, 'src/shared/components'),
+        'context': path.resolve(__dirname, 'src/shared/context'),
+        'utils': path.resolve(__dirname, 'src/shared/utils'),
+        'views': path.resolve(__dirname, 'src/shared/views')
+      }
     },
     mode: 'development',
     devtool: 'source-map',

@@ -1,18 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router';
 import { Helmet } from 'react-helmet';
-import styled, { css } from 'styled-components';
 import classNames from 'classnames';
 
-import {
-  ViewWrapper
-} from '../index';
+import { Consumer } from 'context/Context.jsx';
 
-import {
-  Consumer
-} from '../../context/Context.jsx';
-
-import { ObjectUtil } from '../../utils';
+import SearchBar from 'components/Search/Search.jsx';
+import ViewWrapper from 'components/common/ViewWrapper.jsx';
 
 class Homepage extends React.Component{
   async componentWillReceiveProps(nextProps){
@@ -30,6 +23,7 @@ class Homepage extends React.Component{
       <ViewWrapper page="homepage"
         render={true}>
         <Helmet title="Chicago Wedding & Portrait Photographer" />
+        <SearchBar />
       </ViewWrapper>
     )
   }

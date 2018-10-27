@@ -1,23 +1,23 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { injectGlobal } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import atob from 'atob';
 
 import {
   Console,
   Variables,
   ObjectUtil
-} from '../../utils';
+} from 'utils';
 
 import {
   Homepage
-} from '../../views/index';
+} from 'views/index';
 
 
 import {
   AppProvider
-} from '../../context/Context.jsx';
+} from 'context/Context.jsx';
 
 export default class App extends React.Component {
   componentWillMount(){
@@ -46,12 +46,13 @@ export default class App extends React.Component {
               <Route exact path="/" component={ Homepage } />
             </AppProvider>
           </Switch>
+          <GlobalStyle />
       </React.Fragment>
     )
   }
 }
 
-injectGlobal`
+const GlobalStyle = createGlobalStyle`
   html, body, div, span, applet, object, iframe,
   h1, h2, h3, h4, h5, h6, p, blockquote, pre,
   a, abbr, acronym, address, big, cite, code,
@@ -99,22 +100,10 @@ injectGlobal`
 
 
   body {
-    border:20px solid white;
-    height:calc(100vh - 40px);
-    width:calc(100vw - 40px);
+    height:calc(100vh);
+    width:calc(100vw);
     font-family: 'Montserrat',sans-serif;
     background-color:${Variables.backgroundState};
-
-    #gallery{
-      height:100%;
-      width:100%;
-      position:relative;
-
-      > div, .page-wrapper{
-        height:inherit;
-        width:inherit;
-      }
-    }
 
     *,*:focus{
       outline:none;
@@ -122,13 +111,4 @@ injectGlobal`
       outline-color:transparent;
     }
   }
-
-  @media only screen and (max-width:468px){
-    body {
-      border: 10px solid white;
-      height:calc(100vh - 20px);
-      width:calc(100vw - 20px);
-    }
-  }
-
 `;

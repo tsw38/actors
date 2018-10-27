@@ -75,33 +75,34 @@ async function renderHTML({routes, location, matchedRoute, cookies}){
   };
 
   // console.warn(state);
+  let sheet, markup;
 
+  try {
+    sheet = new ServerStyleSheet();
+    markup = ReactDOMServer.renderToString(
+      <StyleSheetManager sheet={sheet.instance}>
+        <StaticRouter location={location} context={{}}>
+          <App
+            state={state}
+            cookies={cookies}
+          />
+        </StaticRouter>
+      </StyleSheetManager>
+    );
+  } catch (err) {
+    console.warn('there might not be any markup', err);
+  } finally {
+    console.log('is there any markup');
+    console.log(markup);
+    console.log(!markup);
+    console.log('+++++++++++++++++++++++++++++++++++++++++++\n\n');
 
-  const sheet = new ServerStyleSheet();
-  const markup = ReactDOMServer.renderToString(
-    <StyleSheetManager sheet={sheet.instance}>
-      <StaticRouter location={location} context={{}}>
-        <App
-          state={state}
-          cookies={cookies}
-        />
-      </StaticRouter>
-    </StyleSheetManager>
-  )
-  console.log('is there any markup');
-  // console.log(markup);
-  console.log('+++++++++++++++++++++++++++++++++++++++++++\n\n')
-
-  const stylesheets = sheet.getStyleTags();
-
-  const virtualDOM = cheerio.load(markup);
-  if(virtualDOM('body > div').children().length === 0){
-    throw 'PageNotFoundError';
-  } else {
-    const helmet = Helmet.renderStatic();
-
-    const finalHTML = await HTMLTemplate({ markup,helmet,state, stylesheets });
-    return finalHTML;
+    return HTMLTemplate({
+      markup: markup || '',
+      helmet: Helmet.renderStatic(),
+      state,
+      stylesheets: sheet.getStyleTags() || ''
+    });
   }
 }
 
