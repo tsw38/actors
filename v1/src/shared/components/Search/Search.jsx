@@ -43,8 +43,8 @@ export default class SearchBar extends React.Component {
 
 const SearchBarWrapper = styled.div`
   width: 100vw;
-  max-height: 110px;
-  height:110px;
+  max-height: 75px;
+  height:70px;
   position: relative;
   background-color:white;
   border-bottom: 1px solid ${Variables.borderGrey}
@@ -66,9 +66,9 @@ const Search = styled.input.attrs({
 })`
   border: none;
   outline: none;
-  height: 98%;
+  height: 96%;
   display: block;
-  font-size: 50px;
+  font-size: 40px;
   width: 100%;
   margin: 0 auto;
   color: ${Variables.borderGreyInverted};
@@ -108,7 +108,7 @@ const Submit = styled.div`
   display: inline-block;
   vertical-align: middle;
   height: 100%;
-  width: 50px;
+  width: 35px;
   padding-top: 0;
   transition: opacity 250ms ease;
   opacity: 0.15;
