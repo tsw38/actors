@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import * as AllActions from '../shared/actions';
+import inject from 'svg-injector';
 
 import {
   App
@@ -24,3 +25,8 @@ async function populate(){
 }
 
 populate();
+
+var mySVGsToInject = document.querySelectorAll('img.to-svg');
+
+// Do the injection
+inject(mySVGsToInject);

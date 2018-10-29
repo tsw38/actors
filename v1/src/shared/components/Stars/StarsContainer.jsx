@@ -3,7 +3,27 @@ import styled from 'styled-components';
 
 import { Variables } from 'utils';
 
+import Celebrity from 'components/Stars/Celebrity.jsx';
+
 export default class StarsContainer extends React.Component {
+  state = {
+    celebrityList: [
+      {
+        name: "Bradley Cooper",
+        lastUpdated: "2018-10-28 19:32:34",
+        movieCount: 23,
+        avgScore: 72,
+        trending: 1
+      },
+      {
+        name: "Henry Cavil",
+        lastUpdated: "2018-08-28 11:32:34",
+        movieCount: 23,
+        avgScore: 72,
+        trending: -1
+      }
+    ]
+  }
 
   render(){
     return(
@@ -16,6 +36,12 @@ export default class StarsContainer extends React.Component {
             <Title>Trending</Title>
           </Header>
           <Content>
+            {this.state.celebrityList && this.state.celebrityList.map((celebrity,index) =>
+              <Celebrity
+                key={`celeb-${index}`}
+                info={celebrity}
+              />
+            )}
           </Content>
         </List>
         <SidebarOuter>
@@ -45,18 +71,22 @@ const List = styled.div`
   height:900px;
 `;
 
-const Header = styled.div`
-  padding: 0 ${Variables.basicPadding}px ${Variables.basicPadding}px;
-  display: grid;
-  grid-template-columns: 4fr 2fr 2fr 1fr;
-`;
-
 const Title = styled.div`
   text-transform: uppercase;
   font-weight: bold;
   display: inline-block;
   font-size: 12px;
   color: #a6a8ab;
+`;
+
+const Header = styled.div`
+  padding: 0 ${Variables.basicPadding}px ${Variables.basicPadding}px;
+  display: grid;
+  grid-template-columns: 4fr 2fr 2fr 1fr;
+
+  ${Title}:not(:first-of-type) {
+    text-align: center;
+  }
 `;
 
 const SidebarOuter = styled.div`

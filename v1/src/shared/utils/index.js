@@ -6,6 +6,8 @@ import coloredConsole from './Console';
 import * as ViewportHelper from './Viewport';
 import { debounce as DebounceHelper } from './Debounce';
 import { throttle as ThrottleHelper } from './Throttle';
+import * as date from './Date';
+
 
 export const Numbers = NumbersUtil;
 export const Sorting = SortingUtil;
@@ -15,3 +17,4 @@ export const Console = coloredConsole;
 export const Viewport = ViewportHelper;
 export const debounce = DebounceHelper;
 export const throttle = ThrottleHelper;
+export const DateHelper = date;
