@@ -1,9 +1,7 @@
 import React from 'react';
 import styled, {css} from 'styled-components';
 
-import ImgToSVG from 'components/common/ImgToSVG.jsx';
-
-import { Variables, DateHelper } from 'utils';
+import { Variables, DateHelper, Trendline } from 'utils';
 
 export default class Celebrity extends React.Component {
 
@@ -11,19 +9,27 @@ export default class Celebrity extends React.Component {
     const {
       name,
       lastUpdated,
-      movieCount,
-      avgScore,
-      trending
+      movies,
+      ratings
     } = this.props.info;
+
+    const avgScore = ratings.reduce((sum, rating) => sum+=rating, 0);
+
+    const trending = Trendline(ratings.map((rating, index) => {
+      return {
+        x: index,
+        y: rating
+      };
+    }), {onlySlope: true});
 
     return(
       <CelebrityWrapper>
         <Label className="label--name">
           <Row>{name}</Row>
-          <Row>Updated on {DateHelper.datetimeToReadable(lastUpdated)}</Row>
+          <Row className="bold">Updated on {DateHelper.datetimeToReadable(lastUpdated)}</Row>
         </Label>
-        <Label className="label--movie">{movieCount}</Label>
-        <Label className="label--score">{avgScore}</Label>
+        <Label className="label--movie">{movies.length}</Label>
+        <Label className="label--score">{Math.floor(avgScore/ratings.length)}%</Label>
         <Label className="label--trending">
           <StyledSVG height="24" width="24" viewBox="0 0 24 24"
             trend={trending}>

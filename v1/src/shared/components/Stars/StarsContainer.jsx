@@ -7,25 +7,11 @@ import Celebrity from 'components/Stars/Celebrity.jsx';
 
 export default class StarsContainer extends React.Component {
   state = {
-    celebrityList: [
-      {
-        name: "Bradley Cooper",
-        lastUpdated: "2018-10-28 19:32:34",
-        movieCount: 23,
-        avgScore: 72,
-        trending: 1
-      },
-      {
-        name: "Henry Cavil",
-        lastUpdated: "2018-08-28 11:32:34",
-        movieCount: 23,
-        avgScore: 72,
-        trending: -1
-      }
-    ]
+    celebrities: this.props.celebrities || []
   }
 
   render(){
+    console.warn(this.props);
     return(
       <StarsContainerWrapper>
         <List>
@@ -36,12 +22,17 @@ export default class StarsContainer extends React.Component {
             <Title>Trending</Title>
           </Header>
           <Content>
-            {this.state.celebrityList && this.state.celebrityList.map((celebrity,index) =>
-              <Celebrity
-                key={`celeb-${index}`}
-                info={celebrity}
-              />
-            )}
+            {Object.keys(this.state.celebrities).length && Object.keys(this.state.celebrities).map((celebrity,index) => {
+              const celeb = this.state.celebrities[celebrity];
+              celeb.name = celebrity;
+
+              return (
+                <Celebrity
+                  key={`celeb-${index}`}
+                  info={celeb}
+                />
+              )
+            })}
           </Content>
         </List>
         <SidebarOuter>

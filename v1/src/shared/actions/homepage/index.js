@@ -1,7 +1,7 @@
-import * as slideshow from './slideshow';
 import * as stateManager from './state';
+import * as celebrities from './celebrities';
 
 export default {
-  slideshow,
-  stateManager
+  stateManager,
+  celebrities
 }

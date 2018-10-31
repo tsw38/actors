@@ -13,7 +13,8 @@ import {Variables} from '../shared/utils';
 
 import {
   imagesEndpoint,
-  searchEndpoint
+  searchEndpoint,
+  celebritiesEndpoint
 } from './api';
 
 dotenv.config();
@@ -37,6 +38,7 @@ app
 .use('*/js', express.static(`./build/${process.env.VERSION_NUMBER}/client`))
 .get('/images(/:image)/?', imagesEndpoint)
 .get('/search', searchEndpoint)
+.get('/celebrities', celebritiesEndpoint)
 .use(ServerRenderer);
 
 app.listen(process.env.HTTP_PORT,'0.0.0.0', () => {

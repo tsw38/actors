@@ -111,4 +111,8 @@ const GlobalStyle = createGlobalStyle`
       outline-color:transparent;
     }
   }
+
+  .bold {
+    font-weight: bold;
+  }
 `;
