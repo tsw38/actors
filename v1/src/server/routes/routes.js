@@ -1,6 +1,6 @@
 import {
-  GlobalActions,
-  HomepageActions,
+  getAllCelebrities,
+  getCelebInfo
 } from 'actions';
 
 const routes = [
@@ -10,14 +10,27 @@ const routes = [
         path: '/',
         exact:true,
         preRender: async () => {
-          const celebrities = await HomepageActions.celebrities.getCelebrities();
+          const celebrities = await getAllCelebrities();
           return {
-            ...HomepageActions.stateManager.initState(),
             celebrities,
             key: 'homepage'
           };
         }
-      }
+      },
+      {
+        path: '/celebrity/:celebrity',
+        exact: false,
+        preRender: async (celeb) => {
+          const info = await getInfo(celeb);
+          return {
+            celebrityList: {
+              current: celeb,
+              [celeb]: info
+            },
+            key: 'celebrities'
+          }
+        }
+      },
     ]
   }
 ]

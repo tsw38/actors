@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as AllActions from '../actions';
+import * as Actions from 'actions';
 
 const AppContext = React.createContext();
 
@@ -29,7 +29,7 @@ export class AppProvider extends React.Component {
           }
         }),
         getParentState: async (page) => page ? this.state[page] : this.state,
-        actions: AllActions
+        actions: Actions
       }}>
         {this.props.children}
       </AppContext.Provider>

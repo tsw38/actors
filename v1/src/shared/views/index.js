@@ -1,1 +1,3 @@
-export Homepage from './Homepage/Homepage.jsx';
+export HomepageView from './Homepage/HomepageView.jsx';
+
+export CelebrityView from './Celebrity/CelebrityView.jsx';

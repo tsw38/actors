@@ -27,10 +27,10 @@ export default function (coordinateArr, options = {}){
 
   const yIntercept = meanOfY - (slope*meanOfX);
 
-	return Array(coordinateArray.length).fill().map((elem, index) => {
+	return Array(coordinateArr.length).fill().map((elem, index) => {
 		return {
 			x: index,
-			y: (slope * index) + intercept
+			y: (slope * index) + yIntercept
 		}
 	});
 }

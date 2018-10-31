@@ -11,7 +11,8 @@ import {
 } from 'utils';
 
 import {
-  Homepage
+  HomepageView,
+  CelebrityView
 } from 'views/index';
 
 
@@ -43,7 +44,8 @@ export default class App extends React.Component {
           ]} />
           <Switch>
             <AppProvider {...this.props}>
-              <Route exact path="/" component={ Homepage } />
+              <Route exact path="/" component={ HomepageView } />
+              <Route exact path="/celebrity/:celebrity" component={ CelebrityView } />
             </AppProvider>
           </Switch>
           <GlobalStyle />
