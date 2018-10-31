@@ -3,9 +3,9 @@ import rottenSearch from '../helpers/rottenSearch.js';
 import cacheInsert from '../helpers/cacheInsert.js';
 
 export default async (req, res, next) => {
-	const celebrity = req.query.celebrity.toLowerCase().trim().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
-
-	let results = await cacheSearch(celebrity.toLowerCase());
+	const celebrity = req.query.celebrity;
+	
+	let results = await cacheSearch(celebrity);
 
 	if (results.status === 404) {
 		results = await rottenSearch(celebrity);

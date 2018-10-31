@@ -1,6 +1,8 @@
 import mysql from 'mysql2/promise';
 import btoa from 'btoa';
 
+import {DateHelper} from 'utils';
+
 export default async ({results, celebrity}) => {
   const connection = await mysql.createConnection({
     host:process.env.DB_HOST,
@@ -9,7 +11,7 @@ export default async ({results, celebrity}) => {
     database:process.env.DB_NAME
   });
 
-  const celebrityInsert = await connection.query(`INSERT IGNORE INTO celebrity (name) VALUES ('${celebrity.toLowerCase().trim().replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')}');`);
+  const celebrityInsert = await connection.query(`INSERT IGNORE INTO celebrity (name, lastUpdated) VALUES ('${celebrity}', '${DateHelper.toDateTime(new Date)}');`);
   const celebrityKey    = celebrityInsert[0].insertId;
 
   const insertMoviesQuery = "INSERT IGNORE INTO movie (name, rating, year, boxOffice) VALUES ?";

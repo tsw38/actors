@@ -11,7 +11,6 @@ export default class StarsContainer extends React.Component {
   }
 
   render(){
-    console.warn(this.props);
     return(
       <StarsContainerWrapper>
         <List>
@@ -22,7 +21,7 @@ export default class StarsContainer extends React.Component {
             <Title>Trending</Title>
           </Header>
           <Content>
-            {Object.keys(this.state.celebrities).length && Object.keys(this.state.celebrities).map((celebrity,index) => {
+            {!Object.keys(this.state.celebrities).length ? null : Object.keys(this.state.celebrities).map((celebrity,index) => {
               const celeb = this.state.celebrities[celebrity];
               celeb.name = celebrity;
 
@@ -50,7 +49,7 @@ export default class StarsContainer extends React.Component {
 const StarsContainerWrapper = styled.div`
   width: 100%;
   margin: ${Variables.basicPadding*9}px auto 0;
-  height:100vh;
+  padding-bottom: ${Variables.basicPadding*9}px;
   max-width: ${Variables.appWidth}px;
   display: grid;
   grid-template-columns: 3fr 1fr;
@@ -59,7 +58,6 @@ const StarsContainerWrapper = styled.div`
 
 const List = styled.div`
   width: 100%;
-  height:900px;
 `;
 
 const Title = styled.div`

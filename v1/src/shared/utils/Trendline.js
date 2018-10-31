@@ -7,9 +7,9 @@ export default function (coordinateArr, options = {}){
     return sum += coordinate.y;
   }, 0)/coordinateArr.length;
 
-  const XiMeanOfX = coordinateArr.map((coordinate, index) => coordinate.x - meanOfX);
+  const XiMeanOfX = coordinateArr.map(coordinate => coordinate.x-=meanOfX);
 
-  const YiMeanOfY = coordinateArr.map((coordinate, index) => coordinate.y - meanOfY);
+  const YiMeanOfY = coordinateArr.map(coordinate => coordinate.y-=meanOfY);
 
   const XiYiProduct = XiMeanOfX.map((val, index) => val *= YiMeanOfY[index]);
 

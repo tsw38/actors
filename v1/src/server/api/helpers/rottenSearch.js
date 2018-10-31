@@ -1,66 +1,67 @@
-import puppeteer from 'puppeteer';
+import cheerio from 'cheerio';
+import curl from 'curl';
+
+import atob from 'atob';
+
+import  { Variables } from 'utils';
 
 export default async function headless(celebrity = ''){
   if(!celebrity) return;
-  celebrity = celebrity
+  celebrity = atob(celebrity)
     .trim().toLowerCase()
     .replace(/\s+/g, '_')
     .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '');
 
-  const browser = await puppeteer.launch();
-  const page    = await browser.newPage();
-
-  await page.goto(`https://www.rottentomatoes.com/celebrity/${celebrity}`);
-  let pageCheck = await page.$eval('#main_container', container => container.innerText);
-
-  if((/(404.+)not\sfound/gi).test(pageCheck)){
-    celebrity = celebrity.replace(/\_/g, '-');
-
-    await page.goto(`https://www.rottentomatoes.com/celebrity/${celebrity}`);
-    pageCheck = await page.$eval('#main_container', container => container.innerText);
-
-    // the second test is not there
-    if((/(404.+)not\sfound/gi).test(pageCheck)){
-      await browser.close();
-      return {
-        status: 404,
-        data: `https://www.rottentomatoes.com/search/?search=${celebrity.replace(/\-/, '+')}`
+  let markup;
+  for (let i = 0; i <= 1; i++) {
+    try {
+      markup = await Variables.axios(`https://www.rottentomatoes.com/celebrity/${celebrity}`);
+      break;
+    } catch (e) {
+      if (i === 0) {
+        celebrity = celebrity.replace(/\_/g, '-');
+      } else {
+        console.warn('celebrity needs to be manually inserted');
       }
     }
   }
 
-  // let tableHead = await page.$$eval('#filmographyTbl thead th', nodes => nodes.map(node => node.innerText.replace('\t', '')));
-  //     tableHead.splice(2,1);
+  if(markup) {
+    markup = markup.data;
+    let $ = cheerio.load(markup);
 
-  let movies = await page.$$eval('#filmographyTbl tbody tr', movies => movies.map(movie => {
-      let columns = movie.innerText.split('\t').map(column => column.replace(/\n/g, ''));
-      let role = movie
-        .innerText
-        .split('\t')[2]
-        .split('\n')
-        .filter(elem => elem.length)
-        .map(str => {
-          if((/producer/i).test(str)){ str = 'Producer'; }
-          else if((/screenwriter/i).test(str)){ str = 'Screenwriter'; }
-          else if((/director/i).test(str)){ str = 'Director'; }
-          else { str = "Actor"; }
-          return str;
-        });
+    let movies = $('#filmographyTbl tbody tr').map((i, movie) => {
+      const columns = $(movie).find('td').map((ind, cell) => {
+        const text = $(cell).text().trim().replace(/\s{2,}/g,'|');
+        return text;
+      }).get();
 
-      return {
-        role,
-        title: columns[1],
-        year: Number(columns[4]),
-        rating: columns[0].replace(/\%/g, ''),
-        boxOffice: (/[0-9]/g).test(columns[3]) ? columns[3] : null
-      };
-  }));
+        let role = columns[2].split('|')
+          .map(str => {
+            if((/producer/i).test(str)){ str = 'Producer'; }
+            else if((/screenwriter/i).test(str)){ str = 'Screenwriter'; }
+            else if((/director/i).test(str)){ str = 'Director'; }
+            else { str = "Actor"; }
+            return str;
+          });
 
-  // await page.screenshot({path: `${celebrity}.png`});
-  await browser.close();
+        return {
+          role,
+          title: columns[1],
+          year: Number(columns[4]),
+          rating: columns[0].replace(/\%/g, ''),
+          boxOffice: (/[0-9]/g).test(columns[3]) ? columns[3] : null
+        };
+    }).get();
+
+    return {
+      status: 200,
+      data: movies
+    }
+  }
 
   return {
-    status: 200,
-    data: movies
+    status: 404,
+    data: `https://www.rottentomatoes.com/search/?search=${celebrity.replace(/\-/, '+')}`
   }
 }

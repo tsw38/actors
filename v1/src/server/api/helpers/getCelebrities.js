@@ -17,16 +17,8 @@ export default async (celebrity) => {
     JOIN
       celebToMovie as ctm ON c.id = ctm.celebId
     JOIN
-      movie as m ON ctm.movieId = m.name`);
-
-  let movies = {};
-
-  // const result = data[0].reduce((celebrities, celebrity) => {
-  //   celebrities[celebrity.name] = {
-  //     movieCount: ++(celebrities[celebrity.name].movieCount || 0),
-  //     scores: celebrities[celebrity.name].scores +
-  //   }
-  // }, {});
+      movie as m ON ctm.movieId = m.name
+    ORDER BY lastUpdated desc`);
 
   return {
     status: data[0].length ? 200 : 404,

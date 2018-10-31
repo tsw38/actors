@@ -80,7 +80,6 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
   	line-height: 1;
-    overflow:hidden;
   }
   ol, ul {
   	list-style: none;
@@ -100,7 +99,6 @@ const GlobalStyle = createGlobalStyle`
 
 
   body {
-    height:calc(100vh);
     width:calc(100vw);
     font-family: 'Montserrat',sans-serif;
     background-color:${Variables.backgroundState};

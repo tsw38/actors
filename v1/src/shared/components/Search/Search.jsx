@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import btoa from 'btoa';
 
 import {
   debounce,
@@ -16,10 +17,10 @@ export default class SearchBar extends React.Component {
 
   handleSubmit = async () => {
     const response = await Variables.axios(
-      `${Variables.origin}/search?celebrity=${encodeURIComponent(this.state.query)}`
+      `${Variables.origin}/search?celebrity=${btoa(this.state.query)}`
     );
     // reroute if there is a response
-    console.warn(response);
+    // console.warn(response);
   }
 
 
