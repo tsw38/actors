@@ -10,6 +10,15 @@ dotenv.config({
   safe:true
 });
 
+var aliases = {
+  'actions': path.resolve(    __dirname, 'src/shared/actions'),
+  'components': path.resolve( __dirname, 'src/shared/components'),
+  'context': path.resolve(    __dirname, 'src/shared/context'),
+  'utils': path.resolve(      __dirname, 'src/shared/utils'),
+  'views': path.resolve(      __dirname, 'src/shared/views'),
+  'contants': path.resolve(   __dirname, 'src/contants'),
+};
+
 module.exports = [
   {
     name: 'client',
@@ -30,6 +39,9 @@ module.exports = [
         }
       ],
     },
+    resolve: {
+      alias: aliases
+    },
     // resolve: {
     //   extensions: ['.js', '.jsx'],
     //   alias: {
@@ -39,7 +51,7 @@ module.exports = [
     //   }
     // },
     optimization: {
-      minimize: true,
+      minimize: false,
       minimizer: [
         new UglifyJsPlugin({
           test: /\.jsx?$/i,
@@ -47,8 +59,8 @@ module.exports = [
           sourceMap: true,
           uglifyOptions: {
             ecma: 6,
-            warnings: false,
-            compress: true,
+            warnings: true,
+            compress: false,
             topLevel: true,
             ie8: false,
           }
@@ -76,7 +88,10 @@ module.exports = [
       libraryTarget: 'commonjs2',
       publicPath: '/build/',
     },
-    mode: 'development',
+    resolve: {
+      alias: aliases
+    },
+    mode: 'production',
     module: {
       rules: [
         {
@@ -85,6 +100,23 @@ module.exports = [
           loader: 'babel-loader'
         }
       ],
+    },
+    optimization: {
+      minimize: false,
+      minimizer: [
+        new UglifyJsPlugin({
+          test: /\.jsx?$/i,
+          exclude: /(node_modules\/)/,
+          sourceMap: true,
+          uglifyOptions: {
+            ecma: 6,
+            warnings: true,
+            compress: false,
+            topLevel: true,
+            ie8: false,
+          }
+        })
+      ]
     },
     plugins: [
       new dotenv_webpack({
