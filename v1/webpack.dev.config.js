@@ -6,6 +6,15 @@ const dotenv_webpack          = require('dotenv-webpack');
 
 dotenv.config();
 
+var aliases = {
+  'actions': path.resolve(    __dirname, 'src/shared/actions'),
+  'components': path.resolve( __dirname, 'src/shared/components'),
+  'context': path.resolve(    __dirname, 'src/shared/context'),
+  'utils': path.resolve(      __dirname, 'src/shared/utils'),
+  'views': path.resolve(      __dirname, 'src/shared/views'),
+  'contants': path.resolve(   __dirname, 'src/contants'),
+};
+
 // console.log('this is the origin', process.env);
 module.exports = [
   {
@@ -30,13 +39,7 @@ module.exports = [
       ]
     },
     resolve: {
-      alias: {
-        'actions': path.resolve(__dirname, 'src/shared/actions'),
-        'components': path.resolve(__dirname, 'src/shared/components'),
-        'context': path.resolve(__dirname, 'src/shared/context'),
-        'utils': path.resolve(__dirname, 'src/shared/utils'),
-        'views': path.resolve(__dirname, 'src/shared/views')
-      }
+      alias: aliases
     },
     optimization: {
       minimize: false,
@@ -74,13 +77,7 @@ module.exports = [
       publicPath: '/build/',
     },
     resolve: {
-      alias: {
-        'actions': path.resolve(__dirname, 'src/shared/actions'),
-        'components': path.resolve(__dirname, 'src/shared/components'),
-        'context': path.resolve(__dirname, 'src/shared/context'),
-        'utils': path.resolve(__dirname, 'src/shared/utils'),
-        'views': path.resolve(__dirname, 'src/shared/views')
-      }
+      alias: aliases
     },
     mode: 'development',
     devtool: 'source-map',

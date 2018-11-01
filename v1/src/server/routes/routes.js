@@ -21,10 +21,10 @@ const routes = [
         path: '/celebrity/:celebrity',
         exact: false,
         preRender: async (celeb) => {
-          const info = await getInfo(celeb);
+          const info = await getCelebInfo(celeb);
           return {
+            current: celeb,
             celebrityList: {
-              current: celeb,
               [celeb]: info
             },
             key: 'celebrities'

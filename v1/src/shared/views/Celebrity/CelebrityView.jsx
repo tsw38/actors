@@ -10,13 +10,17 @@ import ViewWrapper from 'components/common/ViewWrapper.jsx';
 import CelebrityContainer from 'components/Celebrity/CelebrityContainer.jsx';
 
 class CelebrityView extends React.Component{
-  state = this.props.state.celebrityList || {};
+  state = this.props.state.celebrities || {
+    key: 'celebrities',
+    current: '',
+    celebrityList: {},
+  };
 
   async componentWillReceiveProps(nextProps){
-    const parentState  = await nextProps.getParentState('celebrityList');
+    const parentState  = await nextProps.getParentState('celebrities');
     const stateChanged = ObjectUtil.compare(this.state, parentState).changed;
 
-    console.warn(parentState, stateChanged);
+    // console.warn(parentState, stateChanged);
     if(stateChanged) {
       this.setState({
         ...this.state,
@@ -24,47 +28,43 @@ class CelebrityView extends React.Component{
       });
     }
   }
+
   async componentDidMount(){
     const {
       actions,
       stateUpdater
     } = this.props;
 
-    console.warn(this.props.state);
+    const currentCeleb = this.props.match.params.celebrity;
+    
+    if(!Object.keys(this.state.celebrityList).length || this.state.current !== currentCeleb){
+      const celebrity = await actions.getCelebInfo(currentCeleb);
+      const nextState = {
+        ...this.state,
+        current: currentCeleb,
+        celebrityList: {
+          ...this.state.celebrityList,
+          [currentCeleb]: celebrity
+        }
+      };
 
-    // const {CelebrityActions} = actions;
+      this.setState(nextState);
 
-    // if(this.state.celebrityList.length === 0){
-    //
-    //   const celebrities = await HomepageActions.celebrities.getCelebrities();
-    //
-    //   this.setState({
-    //     ...this.state,
-    //     celebrities
-    //   })
-    //
-    //   await stateUpdater('celebrityList', {
-    //     ...this.state,
-    //     celebrities
-    //   });
-    // }
+      await stateUpdater('celebrities', nextState);
+    }
   }
 
   render(){
     const {
-      celebrities
+      current,
+      celebrityList
     } = this.state;
-
-    // console.warn(celebrities);
 
     return (
       <ViewWrapper page="celebrity"
         render={true}>
         <Helmet title="Chicago Wedding & Portrait Photographer" />
-        <CelebrityContainer celebrity={{
-          // name: celebrities.current,
-          // movies: celebrities[celebrities.current].movies
-        }}/>
+        <CelebrityContainer celebrity={celebrityList[current]}/>
       </ViewWrapper>
     )
   }

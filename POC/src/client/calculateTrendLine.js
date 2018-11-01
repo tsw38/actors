@@ -11,7 +11,7 @@
 // 	};
 // });
 
-export default function(coordinateArray){
+export default function(coordinateArray, options = {}){
 	const a = coordinateArray.length * coordinateArray.reduce((multiple, coordinate) => {
 	  multiple += coordinate.x*coordinate.y;
 	  return multiple;
@@ -37,6 +37,10 @@ export default function(coordinateArray){
 	}, 0), 2);
 
 	const m = (a-b)/(c-d);
+
+	if (options.onlySlope) {
+		return m;
+	}
 
 	const e = coordinateArray.reduce((sum, coordinate) => {
 	  sum += coordinate.y;

@@ -12,8 +12,11 @@ import ViewWrapper from 'components/common/ViewWrapper.jsx';
 
 class Homepage extends React.Component{
   state = this.props.state.homepage ?
-    this.props.state.homepage :
-    this.props.actions.HomepageActions.stateManager.initState();
+    this.props.state.homepage : {
+      key: 'homepage',
+      celebrities: {},
+      location: '/'
+    };
 
   async componentWillReceiveProps(nextProps){
     const parentState  = await nextProps.getParentState('homepage');
@@ -33,7 +36,7 @@ class Homepage extends React.Component{
 
     const {HomepageActions} = actions;
 
-    if(this.state.celebrities.length === 0){
+    if(this.state.homepage.length === 0){
 
       const celebrities = await HomepageActions.celebrities.getCelebrities();
 

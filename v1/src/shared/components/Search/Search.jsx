@@ -19,6 +19,7 @@ export default class SearchBar extends React.Component {
     const response = await Variables.axios(
       `${Variables.origin}/search?celebrity=${btoa(this.state.query)}`
     );
+    window.location = `/celebrity/${btoa(this.state.query)}`;
     // reroute if there is a response
     // console.warn(response);
   }

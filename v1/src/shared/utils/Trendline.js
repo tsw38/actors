@@ -27,7 +27,7 @@ export default function (coordinateArr, options = {}){
 
   const yIntercept = meanOfY - (slope*meanOfX);
 
-	return Array(coordinateArr.length).fill().map((elem, index) => {
+	return Array(options.points || coordinateArr.length).fill().map((elem, index) => {
 		return {
 			x: index,
 			y: (slope * index) + yIntercept
