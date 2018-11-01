@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 
 import { Consumer } from 'context/Context.jsx';
 
@@ -36,7 +37,7 @@ class CelebrityView extends React.Component{
     } = this.props;
 
     const currentCeleb = this.props.match.params.celebrity;
-    
+
     if(!Object.keys(this.state.celebrityList).length || this.state.current !== currentCeleb){
       const celebrity = await actions.getCelebInfo(currentCeleb);
       const nextState = {
@@ -63,7 +64,8 @@ class CelebrityView extends React.Component{
     return (
       <ViewWrapper page="celebrity"
         render={true}>
-        <Helmet title="Chicago Wedding & Portrait Photographer" />
+        <Helmet title="" />
+        <Link to={`/`}>Homepage</Link>
         <CelebrityContainer celebrity={celebrityList[current]}/>
       </ViewWrapper>
     )

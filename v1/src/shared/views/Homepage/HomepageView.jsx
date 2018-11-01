@@ -18,27 +18,32 @@ class Homepage extends React.Component{
       location: '/'
     };
 
-  async componentWillReceiveProps(nextProps){
-    const parentState  = await nextProps.getParentState('homepage');
-    const stateChanged = ObjectUtil.compare(this.state, parentState).changed;
-    if(stateChanged) {
-      this.setState({
+    async componentWillReceiveProps(nextProps){
+      const parentState  = await nextProps.getParentState('homepage');
+      const stateChanged = ObjectUtil.compare(this.state, parentState).changed;
+
+      console.warn(this.state, {
         ...this.state,
         ...parentState
       });
+      // reinitialize state
+      // celebrity > homepage is broken
     }
-  }
+
   async componentDidMount(){
     const {
       actions,
       stateUpdater
     } = this.props;
 
-    const {HomepageActions} = actions;
+    // console.warn(this.state);
 
-    if(this.state.homepage.length === 0){
+    if(!ObjectUtil.deepFind(this.state, 'homepage')){
+      // console.warn('THERE ISNT A HOMEPAGE OBJECT');
 
-      const celebrities = await HomepageActions.celebrities.getCelebrities();
+      const celebrities = await actions.getAllCelebrities();
+
+      // console.warn(celebrities);
 
       this.setState({
         ...this.state,
