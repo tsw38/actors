@@ -10,7 +10,7 @@ import { ObjectUtil } from 'utils';
 import ViewWrapper from 'components/common/ViewWrapper.jsx';
 import CelebrityContainer from 'components/Celebrity/CelebrityContainer.jsx';
 
-class CelebrityView extends React.Component{
+export default class CelebrityView extends React.Component{
   state = this.props.state.celebrities || {
     key: 'celebrities',
     current: '',
@@ -71,11 +71,3 @@ class CelebrityView extends React.Component{
     )
   }
 }
-
-export default props => (
-  <Consumer>
-    {context => {
-      return <CelebrityView {...props} {...context} />
-    }}
-  </Consumer>
-)

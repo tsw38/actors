@@ -3,12 +3,21 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { matchRoutes } from 'react-router-config';
+import { Provider } from 'react-redux'
 import { Helmet } from 'react-helmet';
 import cheerio from 'cheerio';
-import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+
+import {
+    ServerStyleSheet,
+    StyleSheetManager
+} from 'styled-components'
+
 import chalk from 'chalk';
 
-import { App } from '../shared/components';
+import { App } from 'shared/components';
+import reducer from 'shared/reducers/index.js';
 
 import routes from './routes/routes';
 import HTMLTemplate from './html.js';
@@ -26,9 +35,7 @@ const asyncMatchRoute = async (routes,location, cookies) => {
       console.log('\n-----------------------------------')
       console.log(route);
       console.log('-----------------------------------\n');
-      return {
-        preRender: route.preRender
-      }
+      return route;
     })
     .slice(-1);
 
@@ -52,58 +59,46 @@ async function getPrerequisites() {
 }
 
 async function renderHTML({routes, location, matchedRoute, cookies}){
-  const subpage = location.split('/').pop();
-  console.log('+++++++++++++++++++++++++++++++++++++++++++')
-  console.log('this is the matchedRoute', matchedRoute);
-  console.log('this is the location', location);
-  console.log('this is the subpage', subpage);
+    const subpage = location.split('/').pop();
+    console.log('+++++++++++++++++++++++++++++++++++++++++++')
+    console.log('this is the matchedRoute', matchedRoute);
+    console.log('this is the location', location);
+    console.log('this is the subpage', subpage);
 
-  const prerequisites = await matchedRoute[0].preRender(subpage);
-  // console.log('prerequisites', prerequisites);
+    const preRender = await matchedRoute[0].preRender(subpage);
 
-  const {
-    key,
-    ...remainingOptions
-  } = prerequisites;
+    let sheet, markup, store;
 
-  const state = {
-    [key]: {
-      key,
-      ...remainingOptions,
-      location
+    store = createStore(reducer, preRender, applyMiddleware(thunk));
+
+    try {
+        sheet = new ServerStyleSheet();
+
+        markup = ReactDOMServer.renderToString(
+            <StyleSheetManager sheet={sheet.instance}>
+                <StaticRouter location={location} context={{}}>
+                    <Provider store={store}>
+                        <App
+                            cookies={cookies}
+                        />
+                    </Provider>
+                </StaticRouter>
+            </StyleSheetManager>
+        );
+    } catch (err) {
+        console.warn('there might not be any markup', err);
+    } finally {
+        // console.log('is there any markup');
+        // console.log(markup);
+        console.log('+++++++++++++++++++++++++++++++++++++++++++\n\n');
+
+        return HTMLTemplate({
+            markup: markup || '',
+            helmet: Helmet.renderStatic(),
+            store,
+            stylesheets: sheet.getStyleTags() || ''
+        });
     }
-  };
-
-  // console.warn(state);
-  let sheet, markup;
-
-  try {
-    sheet = new ServerStyleSheet();
-    markup = ReactDOMServer.renderToString(
-      <StyleSheetManager sheet={sheet.instance}>
-        <StaticRouter location={location} context={{}}>
-          <App
-            state={state}
-            cookies={cookies}
-          />
-        </StaticRouter>
-      </StyleSheetManager>
-    );
-  } catch (err) {
-    console.warn('there might not be any markup', err);
-  } finally {
-    console.log('is there any markup');
-    console.log(markup);
-    console.log(!markup);
-    console.log('+++++++++++++++++++++++++++++++++++++++++++\n\n');
-
-    return HTMLTemplate({
-      markup: markup || '',
-      helmet: Helmet.renderStatic(),
-      state,
-      stylesheets: sheet.getStyleTags() || ''
-    });
-  }
 }
 
 export default async (req,res,next) => {

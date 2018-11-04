@@ -15,7 +15,7 @@ export default class Celebrity extends React.Component {
       ratings
     } = this.props.info;
 
-    const avgScore = ratings.reduce((sum, rating) => sum+=rating, 0);
+    let avgScore = Math.floor(ratings.reduce((sum, rating) => sum+=rating, 0)/ratings.length);
 
     const trending = Trendline(ratings.map((rating, index) => {
       return {
@@ -33,7 +33,7 @@ export default class Celebrity extends React.Component {
           <Row className="bold">Updated on {DateHelper.datetimeToReadable(lastUpdated)}</Row>
         </Label>
         <Label className="label--movie">{movies.length}</Label>
-        <Label className="label--score">{Math.floor(avgScore/ratings.length)}%</Label>
+        <Label className="label--score">{avgScore}%</Label>
         <Label className="label--trending">
           <StyledSVG height="24" width="24" viewBox="0 0 24 24"
             trend={-trending}>

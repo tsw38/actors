@@ -15,11 +15,6 @@ import {
   CelebrityView
 } from 'views/index';
 
-
-import {
-  AppProvider
-} from 'context/Context.jsx';
-
 export default class App extends React.Component {
   componentWillMount(){
   }
@@ -29,24 +24,22 @@ export default class App extends React.Component {
       <React.Fragment>
         <Helmet
           htmlAttributes={{lang:"en"}}
-          titleTemplate="Tyler Scott | %s"
+          titleTemplate="Starcharts | %s"
           titleAttributes={{itemprop: "name", lang: "en"}}
           link={[
-            {rel:"canonical", href: `https://tylerscott.gallery/`}
+            {rel:"canonical", href: `http://tomato.tylerscottwilliams.com/`}
           ]}
           meta={[
-            {name: "description", content: "Photographer &amp; Small Scale Explorer. As a Chicago transplant via New Jersey I\'ve traveled a fair amount and have found the most joy out of capturing you in your element. Let me prove it."},
-            {name: "keywords", content: "photography, photographer, headshot photography, wedding photography, portrait photography, Tyler Scott Williams, Tyler Scott, wedding, headshots, headshot, portraits, wedding day, portrait, dslr, new york, New York, Manhattan, New York City, New York, New Jersey, Jersey City, JC, NJ, commercial, blog, contact, Chicago, Chi, Chitown, south west florida, Florida, Senior Portraits, Maternity Portraits, Commercial, Professional Photography, Illinois, Chicago IL, 60657"},
-            {property: "og:site_name", content: 'Tyler Scott | Chicago Wedding & Portrait Photographer'},
+            {name: "description", content: ""},
+            {name: "keywords", content: ""},
+            {property: "og:site_name", content: ''},
             {property: "og:type", content: 'website'},
-            {property: "og:url", content: 'https://tylerscott.gallery/'},
+            {property: "og:url", content: 'http://tomato.tylerscottwilliams.com/'},
             {name: "viewport", content: "width=device-width, initial-scale=1,minimum-scale=1"}
           ]} />
           <Switch>
-            <AppProvider {...this.props}>
-              <Route exact path="/" component={ HomepageView } />
-              <Route exact path="/celebrity/:celebrity" component={ CelebrityView } />
-            </AppProvider>
+            <Route exact path="/" component={ HomepageView } />
+            <Route exact path="/celebrity/:celebrity" component={ CelebrityView } />
           </Switch>
           <GlobalStyle />
       </React.Fragment>

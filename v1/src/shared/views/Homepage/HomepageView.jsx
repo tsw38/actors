@@ -1,79 +1,62 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
-
-import { Consumer } from 'context/Context.jsx';
+import { connect } from 'react-redux'
 
 import { ObjectUtil } from 'utils';
 
+import * as dispatchActions from 'actions';
 import SearchBar from 'components/Search/Search.jsx';
 import StarsContainer from 'components/Homepage/StarsContainer.jsx';
 import ViewWrapper from 'components/common/ViewWrapper.jsx';
 
 class Homepage extends React.Component{
-  state = this.props.state.homepage ?
-    this.props.state.homepage : {
-      key: 'homepage',
-      celebrities: {},
-      location: '/'
-    };
+    componentWillMount() {
+        const {
+            celebrities,
+            getAllCelebrities
+        } = this.props;
 
-    async componentWillReceiveProps(nextProps){
-      const parentState  = await nextProps.getParentState('homepage');
-      const stateChanged = ObjectUtil.compare(this.state, parentState).changed;
-
-      console.warn(this.state, {
-        ...this.state,
-        ...parentState
-      });
-      // reinitialize state
-      // celebrity > homepage is broken
+        if(!Object.keys(celebrities).length) {
+            getAllCelebrities.withDispatch();
+        }
     }
 
-  async componentDidMount(){
-    const {
-      actions,
-      stateUpdater
-    } = this.props;
 
-    // console.warn(this.state);
-
-    if(!ObjectUtil.deepFind(this.state, 'homepage')){
-      // console.warn('THERE ISNT A HOMEPAGE OBJECT');
-
-      const celebrities = await actions.getAllCelebrities();
-
-      // console.warn(celebrities);
-
-      this.setState({
-        ...this.state,
-        celebrities
-      })
-
-      await stateUpdater('homepage', {
-        ...this.state,
-        celebrities
-      });
+    shouldComponentUpdate(nextProps) {
+        const celebritiesUpdated = ObjectUtil.compare(this.props.celebrities, nextProps.celebrities);
+        // console.warn(celebritiesUpdated);
+        if(celebritiesUpdated) {
+            return true;
+        }
+        return false;
     }
-  }
 
-  render(){
-    return (
-      <ViewWrapper page="homepage"
-        render={true}>
-        <Helmet title="Chicago Wedding & Portrait Photographer" />
-        <SearchBar />
-        <StarsContainer celebrities={this.state.celebrities}/>
-      </ViewWrapper>
-    )
-  }
-}
+    componentDidMount(){
+    }
 
+    render(){
+        // console.warn('these are all the props', this.props);
+        return (
+            <ViewWrapper page="homepage"
+                render={true}>
+                <Helmet title="Homepage" />
+                <SearchBar />
+                <StarsContainer celebrities={this.props.celebrities}/>
+            </ViewWrapper>
+        )
+    }
+};
 
-export default props => (
-  <Consumer>
-    {context => {
-      return <Homepage {...props} {...context} />
-    }}
-  </Consumer>
-)
+const mapStateToProps = ({celebrities}) => ({
+    celebrities
+});
+
+const mapDispatchToProps = dispatch => ({
+    getAllCelebrities: dispatch(dispatchActions.getAllCelebrities.withDispatch)
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Homepage)

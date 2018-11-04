@@ -11,6 +11,7 @@ export default async (req, res, next) => {
 			...(!thisCeleb.movies.includes(celeb.movie) && [celeb.movie])
 		] : [];
 
+		//there might be a problem with this TODO: fix
 		thisCeleb.ratings = thisCeleb.ratings ? [
 			...thisCeleb.ratings,
 			...(thisCeleb.movies && thisCeleb.movies.includes(celeb.movie) && [

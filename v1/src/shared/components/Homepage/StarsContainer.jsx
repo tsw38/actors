@@ -1,13 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Variables } from 'utils';
+import { Variables, ObjectUtil } from 'utils';
 
 import Celebrity from 'components/Homepage/Celebrity.jsx';
 
 export default class StarsContainer extends React.Component {
-  state = {
-    celebrities: this.props.celebrities || []
+
+  shouldComponentUpdate(nextProps){
+      const celebritiesUpdated = ObjectUtil.compare(this.props.celebrities, nextProps.celebrities);
+      console.warn(celebritiesUpdated);
+      if(celebritiesUpdated) {
+          return true;
+      }
+      return false;
   }
 
   render(){
@@ -21,8 +27,8 @@ export default class StarsContainer extends React.Component {
             <Title>Trending</Title>
           </Header>
           <Content>
-            {!Object.keys(this.state.celebrities).length ? null : Object.keys(this.state.celebrities).map((celebrity,index) => {
-              const celeb = this.state.celebrities[celebrity];
+            {!Object.keys(this.props.celebrities).length ? null : Object.keys(this.props.celebrities).map((celebrity,index) => {
+              const celeb = this.props.celebrities[celebrity];
               celeb.name = celebrity;
 
               return (

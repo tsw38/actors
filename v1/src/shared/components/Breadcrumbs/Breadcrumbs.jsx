@@ -5,28 +5,12 @@ import {Bar} from 'react-chartjs-2';
 
 import { Variables, Trendline, ObjectUtil } from 'utils';
 
-export default class CelebrityContainer extends React.Component {
-  state = this.props.celebrity || {
-    name: '',
-    movies: []
-  };
-
-  chartRef = React.createRef();
+export default class Breadcrumbs extends React.Component {
 
   componentDidMount() {
-    console.warn();
   }
 
   componentWillReceiveProps(nextProps) {
-    const stateChanged = ObjectUtil.compare(this.state, nextProps.celebrity).changed;
-    console.warn(stateChanged, nextProps, this.chartRef)
-    // console.warn(parentState, stateChanged);
-    if(stateChanged) {
-      this.setState({
-        ...this.state,
-        ...nextProps.celebrity
-      });
-    }
   }
 
   render(){
@@ -40,24 +24,5 @@ export default class CelebrityContainer extends React.Component {
 }
 
 
-
-
 const BreadcrumbsWrapper = styled.div`
-`;
-
-const Name = styled.h1`
-  font-size:50px;
-  font-weight: bold;
-  display: block;
-  color: ${Variables.borderGreyInverted};
-`;
-
-const ChartWrapper = styled.div`
-  display:block;
-  width:100%;
-  margin-top: ${Variables.basicPadding*3}px;
-  border-radius: ${Variables.basicPadding}px;
-  border: 1px solid ${Variables.borderGrey};
-  display: ${props => props.render ? 'block' : 'none'}
-  background-color: white;
 `;

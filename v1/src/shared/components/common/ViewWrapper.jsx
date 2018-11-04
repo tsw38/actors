@@ -8,8 +8,7 @@ export default class ViewWrapper extends React.Component {
       <React.Fragment>
         <Page>
           <PageContainer
-            className={this.props.page || ''}
-            blur={this.props.blur || ''}>
+            className={this.props.page || ''}>
             {this.props.children}
           </PageContainer>
         </Page>

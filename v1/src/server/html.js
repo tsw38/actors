@@ -1,4 +1,4 @@
-export default ({ markup, helmet, state, stylesheets }) => {
+export default ({ markup, helmet, store, stylesheets }) => {
   let html = `<!DOCTYPE html>
   <!-- VERSION NUMBER: ${process.env.VERSION_NUMBER} -->
   <html ${helmet.htmlAttributes ? helmet.htmlAttributes.toString() : ''}>
@@ -9,15 +9,7 @@ export default ({ markup, helmet, state, stylesheets }) => {
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:500" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Permanent+Marker:400" />
       ${helmet.link ? helmet.link.toString() : ''}
-      <script>window.__INITIAL_STATE__ = ${JSON.stringify(state || {})};</script>
-      <!-- Global site tag (gtag.js) - Google Analytics -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109997675-1"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-109997675-1');
-      </script>
+      <script>window.__INITIAL_STATE__ = ${JSON.stringify(store.getState() || {})};</script>
       ${stylesheets}
     </head>
     <body ${helmet.bodyAttributes ? helmet.bodyAttributes.toString() : ''}>

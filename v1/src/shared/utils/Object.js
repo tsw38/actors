@@ -24,3 +24,8 @@ export const deepFind = (obj, path) => {
   }
   return;
 }
+
+export const spread = arr => arr.reduce((obj, elem) => {
+	obj[elem] = elem;
+	return obj
+},{});

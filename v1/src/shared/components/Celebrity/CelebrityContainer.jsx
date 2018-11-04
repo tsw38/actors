@@ -13,20 +13,34 @@ export default class CelebrityContainer extends React.Component {
 
   chartRef = React.createRef();
 
-  componentDidMount() {
-    console.warn();
+  static getDerivedStateFromProps(props, state) {
+    console.warn('DSFP -- ', props, state);
+    return state;
   }
 
-  componentWillReceiveProps(nextProps) {
-    const stateChanged = ObjectUtil.compare(this.state, nextProps.celebrity).changed;
-    console.warn(stateChanged, nextProps, this.chartRef)
-    // console.warn(parentState, stateChanged);
-    if(stateChanged) {
-      this.setState({
-        ...this.state,
-        ...nextProps.celebrity
-      });
-    }
+  componentDidMount() {
+    console.warn(this.chartRef.current);
+  }
+
+  shouldComponentUpdate(nextProps){
+    console.warn(nextProps);
+    return false;
+  }
+  //
+  // componentWillReceiveProps(nextProps) {
+  //   // const stateChanged = ObjectUtil.compare(this.state, nextProps.celebrity).changed;
+  //   // console.warn(stateChanged, nextProps, this.chartRef.current)
+  //   // // console.warn(parentState, stateChanged);
+  //   // if(stateChanged) {
+  //   //   this.setState({
+  //   //     ...this.state,
+  //   //     ...nextProps.celebrity
+  //   //   });
+  //   // }
+  // }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.warn(prevProps, prevState, snapshot);
   }
 
   render(){

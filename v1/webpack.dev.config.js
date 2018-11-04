@@ -7,12 +7,13 @@ const dotenv_webpack          = require('dotenv-webpack');
 dotenv.config();
 
 var aliases = {
-  'actions': path.resolve(    __dirname, 'src/shared/actions'),
-  'components': path.resolve( __dirname, 'src/shared/components'),
-  'context': path.resolve(    __dirname, 'src/shared/context'),
+  'shared': path.resolve(     __dirname, 'src/shared'),
+  'contants': path.resolve(   __dirname, 'src/contants'),
   'utils': path.resolve(      __dirname, 'src/shared/utils'),
   'views': path.resolve(      __dirname, 'src/shared/views'),
-  'contants': path.resolve(   __dirname, 'src/contants'),
+  'actions': path.resolve(    __dirname, 'src/shared/actions'),
+  'context': path.resolve(    __dirname, 'src/shared/context'),
+  'components': path.resolve( __dirname, 'src/shared/components')
 };
 
 // console.log('this is the origin', process.env);
